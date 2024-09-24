@@ -13,14 +13,17 @@ output = []
 # Opens up the passwords.txt and reads it
 with open(args.password_file) as f:
     encryption = f.read()
-    
+
 # Gets rid of the /n
 list = encryption.split("\n")
 for hash in list:
     # Takes the name and splits it from the password
     names.append(hash.split(":")[0])
-    # Takes the password and splits it from the name
-    hashes.append(hash.split(":")[1])
+    # It tries to split, adn if there is an error, it ignores it
+    try:
+        hashes.append(hash.split(":")[1])
+    except:
+        continue
 
 # Reads each line in worldlist.txt
 with open(args.dict_file) as f:
@@ -31,7 +34,7 @@ for index, line in enumerate(passwords):
     sha_256_hash = hashlib.sha256()
     sha_256_hash.update(line.encode('utf-8'))
     
-    # If the Sha256 hashes match up, it prints out the name and password
+    # If the Sha256 hashes match up, it saves the user and their password matching the hash
     if sha_256_hash.hexdigest() in hashes:
         output.append([hashes.index(sha_256_hash.hexdigest()), f"{names[hashes.index(sha_256_hash.hexdigest())]}:{line}"])
 
